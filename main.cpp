@@ -7,6 +7,8 @@ const int MISSING_FILE = 2;
 const int PARSE_ERROR = 3;
 const int LINT_ERROR = 4;
 
+const QString goodPartsOptions("{ white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, strict: true, newcap: true, immed: true }");
+
 void out(const QString& message) { std::fprintf(stdout, "%s\n", qPrintable(message)); }
 void err(const QString& message) { std::fprintf(stderr, "%s\n", qPrintable(message)); }
 
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
 		inputData = "[ '" + inputData.replace("\n", "', '") + "' ]";
 
 		// run jslint
-		const QString cmd = QString("JSLINT(%1)").arg(inputData);
+		const QString cmd = QString("JSLINT(%1, %2)").arg(inputData).arg(goodPartsOptions);
 		const QScriptValue res = engine.evaluate(cmd);
 		if (engine.hasUncaughtException()) {
 			err("Uncaught exception at parsing " + inputFileName);
@@ -77,13 +79,6 @@ int main(int argc, char *argv[])
 
 				out(QString("%1) Problem at line %2 character %3: '%4'").arg(it.name().toInt() + 1).arg(line).arg(character).arg(evidence));
 				out("\t" + reason);
-				static QStringList detailsProps(QString("a b c d").split(" "));
-				foreach(const QString& detailsProp, detailsProps) {
-					const QScriptValue detail = error.property(detailsProp);
-					if (!detail.isUndefined()) {
-						out("\t" + detail.toString());
-					}
-				}
 			}
 
 			// generate report

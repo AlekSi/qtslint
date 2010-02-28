@@ -6,3 +6,4 @@ CONFIG += console
 CONFIG -= app_bundle
 
 SOURCES += main.cpp
+OTHER_FILES = fulljslint.js
